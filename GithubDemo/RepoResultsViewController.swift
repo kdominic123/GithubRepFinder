@@ -10,13 +10,12 @@ import UIKit
 import MBProgressHUD
 
 // Main ViewController
-class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsPresentingViewControllerDelegate {
+    
     @IBOutlet weak var tableView: UITableView!
     
     var searchBar: UISearchBar!
     var searchSettings = GithubRepoSearchSettings()
-
     var repos: [GithubRepo]!
 
     override func viewDidLoad() {
@@ -36,6 +35,7 @@ class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableV
         // Perform the first search when the view controller first loads
         doSearch()
     }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "repoCell", for: indexPath) as! RepoTableViewCell
@@ -88,6 +88,24 @@ class RepoResultsViewController: UIViewController, UITableViewDelegate, UITableV
                 print(error)
         })
     }
+    
+    func didSaveSettings(settings: GithubRepoSearchSettings) {
+        
+        self.searchSettings = settings
+        doSearch()
+    }
+    
+    func didCancelSettings() {
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navController = segue.destination as! UINavigationController
+        let vc = navController.topViewController as! SearchSettingsViewController
+        vc.settings = self.searchSettings
+        vc.delegate = self
+    }
+
 }
 
 // SearchBar methods
@@ -114,3 +132,9 @@ extension RepoResultsViewController: UISearchBarDelegate {
         doSearch()
     }
 }
+
+protocol SettingsPresentingViewControllerDelegate: class {
+    func didSaveSettings(settings: GithubRepoSearchSettings)
+    func didCancelSettings()
+}
+
