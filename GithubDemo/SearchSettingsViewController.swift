@@ -19,6 +19,8 @@ class SearchSettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        slider.value = Float((settings?.minStars)!)
+        sliderValueLabel.text = "\((settings?.minStars)!)"
 
         // Do any additional setup after loading the view.
     }
